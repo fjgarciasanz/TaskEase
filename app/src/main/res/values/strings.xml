@@ -3,4 +3,5 @@
     <string name="title_hint">Título</string>
     <string name="description_hint">Descripción (opcional)</string>
     <string name="add_task_content_description">Añadir nueva tarea</string>
+    <string name="empty_state_message">¡No hay tareas pendientes!\nAñade una nueva para empezar.</string>
 </resources>

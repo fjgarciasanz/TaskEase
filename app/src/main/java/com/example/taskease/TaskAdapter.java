@@ -1,14 +1,19 @@
 package com.example.taskease;
+
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -46,11 +51,7 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Task currentTask = getItem(position);
-        holder.textViewTitle.setText(currentTask.getTitle());
-        holder.textViewDescription.setText(formatDate(currentTask.getDate()));
-        holder.checkBoxCompleted.setChecked(currentTask.isCompleted());
-        updateStrikeThrough(holder.textViewTitle, currentTask.isCompleted());
+        holder.bind(getItem(position));
     }
 
     public Task getTaskAt(int position) {
@@ -61,12 +62,14 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
         private final TextView textViewTitle;
         private final TextView textViewDescription;
         private final CheckBox checkBoxCompleted;
+        private final View statusBar;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.textview_title);
             textViewDescription = itemView.findViewById(R.id.textview_description);
             checkBoxCompleted = itemView.findViewById(R.id.checkbox_completed);
+            statusBar = itemView.findViewById(R.id.status_bar);
 
             checkBoxCompleted.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();
@@ -85,20 +88,26 @@ public class TaskAdapter extends ListAdapter<Task, TaskAdapter.TaskViewHolder> {
                 }
             });
         }
+
+        public void bind(Task task) {
+            textViewTitle.setText(task.getTitle());
+            textViewDescription.setText(formatDate(task.getDate()));
+            checkBoxCompleted.setChecked(task.isCompleted());
+
+            if (task.isCompleted()) {
+                textViewTitle.setPaintFlags(textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                statusBar.setBackgroundColor(Color.parseColor("#4CAF50")); // Verde
+            } else {
+                textViewTitle.setPaintFlags(textViewTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                statusBar.setBackgroundColor(Color.parseColor("#757575")); // Gris
+            }
+        }
     }
 
     private String formatDate(long timestamp) {
         if (timestamp == 0) return "Sin fecha";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return sdf.format(new Date(timestamp));
-    }
-
-    private void updateStrikeThrough(TextView textView, boolean isCompleted) {
-        if (isCompleted) {
-            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        } else {
-            textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-        }
     }
 
     public interface OnTaskClickListener {

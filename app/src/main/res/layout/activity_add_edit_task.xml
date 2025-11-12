@@ -10,8 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_add_edit"
@@ -32,7 +31,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Título">
+            android:hint="@string/title_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_text_title"
@@ -46,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Descripción (opcional)">
+            android:hint="@string/description_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_text_description"

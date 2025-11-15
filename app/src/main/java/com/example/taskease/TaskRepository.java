@@ -1,46 +1,46 @@
 package com.example.taskease;
+
 import android.app.Application;
 import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-public class TaskRepository {
-    private TaskDao mTaskDao;
-    private LiveData<List<Task>> mAllTasks;
 
-    // ExecutorService para ejecutar tareas en un hilo de fondo.
-    // Usamos un hilo para operaciones simples de base de datos.
+/**
+ * Repositorio que actúa como una capa de abstracción entre el ViewModel y las fuentes de datos.
+ * Es el único punto de acceso a los datos de la aplicación (Principio de Única Fuente de Verdad).
+ */
+public class TaskRepository {
+    // Referencia al DAO (Data Access Object) para interactuar con la base de datos.
+    private final TaskDao mTaskDao;
+    // LiveData que contiene la lista de todas las tareas.
+    private final LiveData<List<Task>> mAllTasks;
+
+    // ExecutorService para ejecutar operaciones de base de datos en un hilo secundario.
+    // Esto es crucial para no bloquear el hilo principal (UI).
     private static final ExecutorService databaseWriteExecutor =
             Executors.newSingleThreadExecutor();
 
-    // Constructor
     public TaskRepository(Application application) {
-        // Obtenemos la instancia de la base de datos
+        // Obtiene una instancia de la base de datos (Singleton).
         TaskEaseDatabase db = TaskEaseDatabase.getDatabase(application);
-
-        // Obtenemos el DAO de la base de datos
+        // Obtiene el DAO de la base de datos.
         mTaskDao = db.taskDao();
-
-        // Obtenemos la lista de tareas (Room maneja esto automáticamente en un hilo de fondo)
+        // Obtiene la lista de tareas del DAO. Room gestiona la actualización de este LiveData.
         mAllTasks = mTaskDao.getAllTasks();
     }
 
-    // --- Métodos de la API pública ---
-    // El ViewModel usará estos métodos
-
     /**
-     * Obtiene todas las tareas de la base de datos.
-     * Room ejecuta esto en un hilo separado por defecto porque devuelve LiveData.
-     * @return LiveData<List<Task>>
+     * Devuelve todas las tareas como LiveData.
+     * El ViewModel observará este LiveData.
+     * @return Un LiveData que contiene la lista de todas las tareas.
      */
     public LiveData<List<Task>> getAllTasks() {
         return mAllTasks;
     }
 
     /**
-     * Inserta una nueva tarea en la base de datos.
-     * Se ejecuta en un hilo de fondo usando el ExecutorService.
-     * (RF-03: Creación de tareas)
+     * Inserta una tarea en la base de datos en un hilo secundario.
      * @param task La tarea a insertar.
      */
     public void insert(Task task) {
@@ -50,9 +50,7 @@ public class TaskRepository {
     }
 
     /**
-     * Actualiza una tarea existente.
-     * Se ejecuta en un hilo de fondo.
-     * (RF-04: Edición de tareas)
+     * Actualiza una tarea en la base de datos en un hilo secundario.
      * @param task La tarea a actualizar.
      */
     public void update(Task task) {
@@ -62,9 +60,7 @@ public class TaskRepository {
     }
 
     /**
-     * Elimina una tarea.
-     * Se ejecuta en un hilo de fondo.
-     * (RF-05: Eliminación de tareas)
+     * Elimina una tarea de la base de datos en un hilo secundario.
      * @param task La tarea a eliminar.
      */
     public void delete(Task task) {

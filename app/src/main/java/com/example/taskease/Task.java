@@ -1,25 +1,36 @@
 package com.example.taskease;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * Clase que representa el modelo de datos para una Tarea.
+ * Esta es una entidad de Room, lo que significa que se mapeará a una tabla en la base de datos.
+ */
 @Entity(tableName = "task_table")
 public class Task {
+
+    // Clave primaria de la tabla. Se genera automáticamente.
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    // Título de la tarea.
     private String title;
+
+    // Descripción opcional de la tarea.
     private String description;
 
-    // Almacenaremos la fecha como un Long (timestamp)
-    // Es más fácil de ordenar y manejar que un String
+    // Fecha de creación de la tarea, almacenada como un timestamp (long).
+    // Esto facilita la ordenación.
     private long date;
 
-    // True si está completada, false si está pendiente
+    // Estado de la tarea: true si está completada, false si está pendiente.
     private boolean completed;
 
-    // Constructor
-    // Nota: No incluimos el 'id' en el constructor
-    // porque se genera automáticamente (autoGenerate = true)
+    /**
+     * Constructor de la clase Task.
+     * El 'id' no se incluye aquí porque Room se encarga de generarlo automáticamente.
+     */
     public Task(String title, String description, long date, boolean completed) {
         this.title = title;
         this.description = description;
@@ -28,7 +39,7 @@ public class Task {
     }
 
     // --- Getters y Setters ---
-    // Room necesita setters y getters para funcionar
+    // Room necesita estos métodos para crear y manipular los objetos Task.
 
     public int getId() {
         return id;

@@ -53,4 +53,10 @@ public interface TaskDao {
      */
     @Query("DELETE FROM task_table")
     void deleteAllTasks();
+
+    /**
+     * Obtiene todas las tareas de forma síncrona. Exclusivamente para TESTING.
+     */
+    @Query("SELECT * FROM task_table ORDER BY date DESC")
+    List<Task> getAllTasksSync();
 }
